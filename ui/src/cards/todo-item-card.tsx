@@ -24,12 +24,12 @@ export function normalizeTodoItemPayload(payload: unknown): TodoItemPayload {
 
 export function TodoItemCard({ payload }: { payload: TodoItemPayload }) {
   const item = payload.item ?? {};
-  const title = payload.title || item.title || tr('todo.cards.todoItem', 'Todo item');
+  const title = payload.title || item.title || tr('todo.cards.todoItem', 'Calendar item');
   const tags = item.tags ?? [];
 
   return (
     <CardShell
-      eyebrow={tr('todo.cards.todoItem', 'Todo item')}
+      eyebrow={tr('todo.cards.todoItem', 'Calendar item')}
       title={title}
       icon={<CheckSquare className="h-4.5 w-4.5" />}
       meta={payload.subtitle || formatDate(item.dueDate) || undefined}

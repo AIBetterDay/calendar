@@ -6,11 +6,11 @@ import type { TodoListPayload } from './types';
 
 export function normalizeTodoListPayload(payload: unknown): TodoListPayload {
   const obj = asObject(payload);
-  const items = normalizeTodoItems(obj.items ?? obj.todos ?? obj.results, 8);
+  const items = normalizeTodoItems(obj.items ?? obj.calendar ?? obj.results, 8);
   const completed = numberValue(obj.completed) ?? items.filter((item) => item.status === 'completed').length;
   const pending = numberValue(obj.pending) ?? items.filter((item) => item.status !== 'completed').length;
   return {
-    title: stringValue(obj.title, tr('todo.cards.todoList', 'Todo list')),
+    title: stringValue(obj.title, tr('todo.cards.todoList', 'Calendar list')),
     subtitle: stringValue(obj.subtitle),
     items,
     total: numberValue(obj.total) ?? items.length,
@@ -23,8 +23,8 @@ export function TodoListCard({ payload }: { payload: TodoListPayload }) {
   const items = payload.items ?? [];
   return (
     <CardShell
-      eyebrow={tr('todo.cards.todoList', 'Todo list')}
-      title={payload.title || tr('todo.cards.todoList', 'Todo list')}
+      eyebrow={tr('todo.cards.todoList', 'Calendar list')}
+      title={payload.title || tr('todo.cards.todoList', 'Calendar list')}
       icon={<ListChecks className="h-4.5 w-4.5" />}
       meta={payload.subtitle}
       footer={
@@ -49,7 +49,7 @@ export function TodoListCard({ payload }: { payload: TodoListPayload }) {
         </div>
       ) : (
         <p className="text-[12.5px] text-muted-foreground">
-          {tr('todo.cards.noTodos', 'No todos to display.')}
+          {tr('todo.cards.noTodos', 'No calendar items to display.')}
         </p>
       )}
     </CardShell>

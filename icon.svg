@@ -1,11 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true">
   <defs>
-    <linearGradient id="bg-todos" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#34d399"/>
-      <stop offset="1" stop-color="#047857"/>
+    <linearGradient id="bg-calendar" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#60a5fa"/>
+      <stop offset="1" stop-color="#2563eb"/>
     </linearGradient>
   </defs>
-  <rect width="64" height="64" rx="14" fill="url(#bg-todos)"/>
-  <rect x="14" y="16" width="36" height="32" rx="5" fill="#fff" fill-opacity="0.96"/>
-  <path d="M21 31.5l5.5 5.5L43 22.5" stroke="#059669" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <rect width="64" height="64" rx="14" fill="url(#bg-calendar)"/>
+  <rect x="13" y="16" width="38" height="34" rx="6" fill="#fff" fill-opacity="0.96"/>
+  <path d="M13 26h38" stroke="#2563eb" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+  <path d="M23 13v8M41 13v8" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+  <rect x="21" y="32" width="8" height="6" rx="2" fill="#93c5fd"/>
+  <rect x="34" y="32" width="9" height="6" rx="2" fill="#2563eb"/>
+  <rect x="21" y="41" width="22" height="4" rx="2" fill="#bfdbfe"/>
 </svg>

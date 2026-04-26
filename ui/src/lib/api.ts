@@ -14,7 +14,7 @@
 import type { Host } from '@better/connector-sdk-web';
 import type { CreateTodoInput, TodoItem, UpdateTodoInput } from './types.js';
 
-const NAMESPACE = 'todo';
+const NAMESPACE = 'calendar';
 
 interface ListResult {
   items: TodoItem[];

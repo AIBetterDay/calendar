@@ -25,7 +25,7 @@ export function TodoRow({ item, compact = false }: { item: TodoCardItem; compact
         <div className="min-w-0 flex-1">
           <div className="flex min-w-0 flex-wrap items-center gap-1.5">
             <h4 className={`min-w-0 flex-1 truncate text-[13px] font-semibold ${done ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
-              {item.title || tr('todo.cards.untitledTodo', 'Untitled todo')}
+              {item.title || tr('todo.cards.untitledTodo', 'Untitled calendar item')}
             </h4>
             <Pill className={priorityTone(item.priority)}>{priorityLabel(item.priority)}</Pill>
           </div>

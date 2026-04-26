@@ -14,7 +14,7 @@ export function normalizeTodoBulkActionPayload(payload: unknown): TodoBulkAction
     completed: numberValue(obj.completed),
     rescheduled: numberValue(obj.rescheduled),
     cancelled: numberValue(obj.cancelled),
-    items: normalizeTodoItems(obj.items ?? obj.todos ?? obj.updatedItems, 6),
+    items: normalizeTodoItems(obj.items ?? obj.calendar ?? obj.updatedItems, 6),
   };
 }
 

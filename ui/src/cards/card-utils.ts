@@ -33,7 +33,7 @@ export function normalizeTodoItem(value: unknown): TodoCardItem {
   const obj = asObject(value);
   return {
     id: stringValue(obj.id),
-    title: stringValue(obj.title, tr('todo.cards.untitledTodo', 'Untitled todo')),
+    title: stringValue(obj.title, tr('todo.cards.untitledTodo', 'Untitled calendar item')),
     description: stringValue(obj.description),
     priority: stringValue(obj.priority, 'medium'),
     status: stringValue(obj.status, 'pending'),

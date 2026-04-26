@@ -4,7 +4,7 @@ import { connect, type Host } from '@better/connector-sdk-web';
 import { setCalendarLocale, notifyThemeChange } from './calendar/index.js';
 import { App } from './App.js';
 import { initI18n, setLocale } from './i18n.js';
-import { registerTodoCards } from './cards/register-todo-cards.js';
+import { registerCalendarCards } from './cards/register-calendar-cards.js';
 import './styles/globals.css';
 import '@better/connector-sdk-web/scrollbars.css';
 
@@ -13,7 +13,7 @@ async function bootstrap() {
 
   const initialLocale = await safe(() => host.i18n.locale(), 'en');
   await initI18n(initialLocale);
-  registerTodoCards(host);
+  registerCalendarCards(host);
   setCalendarLocale(initialLocale);
 
   const initialTheme = await safe(
@@ -57,5 +57,5 @@ async function safe<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
 bootstrap().catch((err) => {
   document.body.innerText = `connector failed to connect: ${err}`;
   // eslint-disable-next-line no-console
-  console.error('[todo-ui] bootstrap failed', err);
+  console.error('[calendar-ui] bootstrap failed', err);
 });

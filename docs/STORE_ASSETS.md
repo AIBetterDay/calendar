@@ -25,16 +25,16 @@ Cards should make Better chat results actionable: lists, summaries, confirmation
 ## Current Assets
 
 - `assets/store/overview.png`: chat-to-calendar planning flow.
-- `assets/store/listview.png`: focused list view for scheduled todos.
-- `assets/store/make_todo.png`: create/edit popover inside the calendar.
+- `assets/store/listview.png`: focused list view for scheduled calendar items.
+- `assets/store/make_todo.png`: create/edit popover inside Calendar.
 - `assets/store/week_view.png`: week planning view.
 - `assets/store/month_view.png`: month planning view.
 
 ## Current Chat Cards
 
-The Todos UI registers these chat card renderers from `ui/src/cards/`:
+The Calendar UI registers these chat card renderers from `ui/src/cards/`:
 
-- `application/x.todo-item+json`
-- `application/x.todo-list+json`
-- `application/x.todo-schedule+json`
-- `application/x.todo-bulk-action+json`
+- `application/x.calendar-item+json`
+- `application/x.calendar-list+json`
+- `application/x.calendar-schedule+json`
+- `application/x.calendar-bulk-action+json`

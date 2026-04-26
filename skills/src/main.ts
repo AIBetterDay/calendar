@@ -1,16 +1,16 @@
 /**
- * Todos connector — skill process entry.
+ * Calendar connector — skill process entry.
  *
- * Skills exposed (all are namespaced as `todo.<name>` by the host agent):
- *   list           — list/filter pending/completed todos
+ * Skills exposed (all are namespaced as `calendar.<name>` by the host agent):
+ *   list           — list/filter pending/completed calendar items
  *   get            — fetch a single row by id
- *   create         — create a new todo with calendar-aware time placement
+ *   create         — create a new calendar item with schedule-aware time placement
  *   update         — update arbitrary fields; status=completed clears reminders
  *   bulk_update    — apply one patch to many ids
  *   delete         — remove a row
  *
  * Storage: a single SQL table `items`. The host transparently rewrites every
- * reference in the queries below to `c_todo_items`.
+ * reference in the queries below to `c_calendar_items`.
  *
  * Undo: each write skill returns a `_undo` envelope (snapshot + ids). The
  * matching `reverse` handler restores from that envelope, so the host's undo
@@ -187,7 +187,7 @@ const DEFAULT_PAGE_SIZE = 500;
 conn.registerSkill<ListParams, { items: TodoOut[]; meta: { total: number; page: number; pageSize: number } }>({
   meta: {
     name: 'list',
-    description: '列出待办，支持按状态/优先级/日期/tag/过期筛选',
+    description: '列出日历，支持按状态/优先级/日期/tag/过期筛选',
     write: false,
   },
   handler: async (params, _ctx) => {
@@ -273,14 +273,14 @@ conn.registerSkill<ListParams, { items: TodoOut[]; meta: { total: number; page: 
 conn.registerSkill<{ id: string }, TodoOut>({
   meta: {
     name: 'get',
-    description: '获取单个待办详情',
+    description: '获取单个日程详情',
     write: false,
     parameters: { id: { type: 'string' } },
   },
   handler: async ({ id }) => {
     const row = await findById(id);
     if (!row) {
-      throw Object.assign(new Error('待办事项不存在'), { code: 'rpc.not_found' });
+      throw Object.assign(new Error('日历事项不存在'), { code: 'rpc.not_found' });
     }
     return format(row);
   },
@@ -307,7 +307,7 @@ interface CreateParams {
 conn.registerSkill<CreateParams, TodoOut & { _undo: { id: string } }>({
   meta: {
     name: 'create',
-    description: '创建新待办（支持时间窗 + 提醒 + 重复规则）',
+    description: '创建新日历（支持时间窗 + 提醒 + 重复规则）',
     write: true,
     parameters: { title: { type: 'string' } },
     required: ['title'],
@@ -390,7 +390,7 @@ interface UpdateResult extends TodoOut {
 conn.registerSkill<UpdateParams, UpdateResult>({
   meta: {
     name: 'update',
-    description: '更新待办内容或状态。status=completed 时自动写 completedAt 并清除提醒',
+    description: '更新日历内容或状态。status=completed 时自动写 completedAt 并清除提醒',
     write: true,
     parameters: { id: { type: 'string' } },
     required: ['id'],
@@ -398,7 +398,7 @@ conn.registerSkill<UpdateParams, UpdateResult>({
   handler: async (input) => {
     const before = await findById(input.id);
     if (!before) {
-      throw Object.assign(new Error('待办事项不存在'), { code: 'rpc.not_found' });
+      throw Object.assign(new Error('日历事项不存在'), { code: 'rpc.not_found' });
     }
     const sets: string[] = ['updated_at = ?'];
     const args: unknown[] = [new Date().toISOString()];
@@ -468,7 +468,7 @@ interface BulkUpdateResult {
 conn.registerSkill<BulkUpdateParams, BulkUpdateResult>({
   meta: {
     name: 'bulk_update',
-    description: '批量更新待办：一次改期、批量完成/取消、批量改优先级或 tag',
+    description: '批量更新日历：一次改期、批量完成/取消、批量改优先级或 tag',
     write: true,
     parameters: { ids: { type: 'array', items: { type: 'string' } } },
     required: ['ids'],
@@ -558,7 +558,7 @@ interface DeleteResult {
 conn.registerSkill<{ id: string }, DeleteResult>({
   meta: {
     name: 'delete',
-    description: '删除待办（host undo 框架可还原）',
+    description: '删除日历（host undo 框架可还原）',
     write: true,
     parameters: { id: { type: 'string' } },
     required: ['id'],
@@ -566,7 +566,7 @@ conn.registerSkill<{ id: string }, DeleteResult>({
   handler: async ({ id }) => {
     const before = await findById(id);
     if (!before) {
-      throw Object.assign(new Error('待办事项不存在'), { code: 'rpc.not_found' });
+      throw Object.assign(new Error('日历事项不存在'), { code: 'rpc.not_found' });
     }
     await host.storage.sql('DELETE FROM items WHERE id = ?', [id]);
     return { deleted: true, _undo: { snapshot: before } };
@@ -582,7 +582,7 @@ conn.registerSkill<{ id: string }, DeleteResult>({
 conn.registerSkill<{ q?: string; limit?: number }, { hits: unknown[] }>({
   meta: {
     name: 'host_mention_hits',
-    description: 'Host @-mention：待办标题',
+    description: 'Host @-mention：日历标题',
     write: false,
   },
   handler: async (params) => {
@@ -599,11 +599,11 @@ conn.registerSkill<{ q?: string; limit?: number }, { hits: unknown[] }>({
         )) as RawRow[]);
     return {
       hits: rows.map((r) => ({
-        kind: 'todo' as const,
+        kind: 'calendar' as const,
         id: r.id,
         title: r.title,
-        connectorId: 'todo' as const,
-        subtitle: '待办',
+        connectorId: 'calendar' as const,
+        subtitle: '日历',
         updatedAt: r.updated_at,
       })),
     };
@@ -655,19 +655,19 @@ async function restoreRow(row: RawRow): Promise<void> {
 
 conn.registerPrompt(
   [
-    '## 【Todo 指南】',
-    '核心：把用户想法落成可执行待办，并**在日历上能被看见**。',
+    '## 【Calendar 指南】',
+    '核心：把用户想法落成可执行日程，并**在日历上能被看见**。',
     '',
     '关键规则：',
     '- 用户给了**具体时间点**（"10 点提醒我 X"、"明早 8 点"）→ **只填 dateStart 和 remindAt**（都是 `YYYY-MM-DDTHH:mm`）。**不要填 dueDate**——后端会自动补一个 30 分钟窗口；你手动塞一个纯日期的 dueDate 会让日历把这条画成整天长条。',
     '- 只需要提醒不需要具体时长（"下周二去医院"）→ 只填 dateStart（可含时间或仅日期），dueDate 留空。',
     '- 日期格式用 ISO：仅日期 `YYYY-MM-DD`，带时间 `YYYY-MM-DDTHH:mm`（本地时区，不要带 Z）。**不要给一边带 T，另一边不带 T 的混合格式。**',
-    '- 用户说"完成了 X" → `todo.update` 把 status 设为 `completed`，不要新建。',
-    '- 小颗粒"帮我记一下" → 直接 `todo.create`，不走 plan_card。',
-    '- 不要为了"先确认一下有没有重复"而额外调用 `todo.list`——重复不是问题，啰嗦才是。',
+    '- 用户说"完成了 X" → `calendar.update` 把 status 设为 `completed`，不要新建。',
+    '- 小颗粒"帮我记一下" → 直接 `calendar.create`，不走 plan_card。',
+    '- 不要为了"先确认一下有没有重复"而额外调用 `calendar.list`——重复不是问题，啰嗦才是。',
     '',
     '创建成功后的回复：',
-    '- UI 已经有一条"待办创建成功"的图标状态行作为系统反馈——你不需要再重复"我已创建 / 加好了 / 记下了"。',
+    '- UI 已经有一条"日程创建成功"的图标状态行作为系统反馈——你不需要再重复"我已创建 / 加好了 / 记下了"。',
     '- 但要**用自然语言把事件本身讲清**：标题 + 具体时间（"明早 8 点"而非 ISO）+ 提醒状态。1 句，有温度，不煽情。',
   ].join('\n'),
 );

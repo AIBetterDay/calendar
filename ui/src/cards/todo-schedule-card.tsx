@@ -13,7 +13,7 @@ import type { TodoSchedulePayload } from './types';
 
 export function normalizeTodoSchedulePayload(payload: unknown): TodoSchedulePayload {
   const obj = asObject(payload);
-  const items = normalizeTodoItems(obj.items ?? obj.todos ?? obj.events, 10).sort((a, b) => {
+  const items = normalizeTodoItems(obj.items ?? obj.calendar ?? obj.events, 10).sort((a, b) => {
     const left = a.dateStart || a.dueDate || '';
     const right = b.dateStart || b.dueDate || '';
     return left.localeCompare(right);
@@ -65,7 +65,7 @@ export function TodoScheduleCard({ payload }: { payload: TodoSchedulePayload }) 
         </div>
       ) : (
         <p className="text-[12.5px] text-muted-foreground">
-          {tr('todo.cards.noSchedule', 'No scheduled todos yet.')}
+          {tr('todo.cards.noSchedule', 'No scheduled items yet.')}
         </p>
       )}
     </CardShell>

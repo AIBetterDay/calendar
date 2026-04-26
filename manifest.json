@@ -1,49 +1,84 @@
 {
-  "id": "todo",
+  "id": "calendar",
   "version": "0.1.0",
-  "engines": { "better": "^1.0.0" },
-  "name": { "en": "Todos", "zh": "待办" },
+  "engines": {
+    "better": "^1.0.0"
+  },
+  "name": {
+    "en": "Calendar",
+    "zh": "日历"
+  },
   "description": {
-    "en": "Capture, schedule and complete actionable todos with calendar-aware reminders.",
-    "zh": "把想法落成可执行的待办，挂在日历上看得见，到点提醒你。"
+    "en": "Plan tasks on a day, week, and month calendar with reminders and schedule-aware AI help.",
+    "zh": "用日、周、月日历安排任务，配合提醒和 AI 帮你规划时间。"
   },
   "category": "productivity",
   "vendor": "AIBetterDay",
   "homepage": "https://github.com/AIBetterDay",
   "icon": "icon.svg",
-
-  "ui": { "entry": "ui/dist/index.html" },
-  "skills": { "entry": "skills/dist/main.js", "memoryLimitMb": 192 },
-
+  "ui": {
+    "entry": "ui/dist/index.html"
+  },
+  "skills": {
+    "entry": "skills/dist/main.js",
+    "memoryLimitMb": 192
+  },
   "capabilities": [
     {
-      "id": "capture-and-schedule-todos",
-      "title": { "en": "Capture and schedule todos", "zh": "记录并安排待办" },
+      "id": "plan-calendar-schedule",
+      "title": {
+        "en": "Plan a calendar schedule",
+        "zh": "规划日历日程"
+      },
       "description": {
-        "en": "Turn natural-language requests into actionable todos with priority, due dates, reminders, repeat rules, tags, and nested subtasks.",
-        "zh": "把自然语言请求变成可执行待办，支持优先级、截止时间、提醒、重复规则、标签和子任务。"
+        "en": "Turn natural-language plans into scheduled calendar items with priority, time windows, reminders, repeat rules, tags, and nested subtasks.",
+        "zh": "把自然语言计划变成有时间段、优先级、提醒、重复规则、标签和子任务的日程。"
       },
       "examples": [
-        { "en": "Remind me to renew the passport next Friday morning.", "zh": "提醒我下周五上午更新护照。" },
-        { "en": "Create a high priority todo for the product review and tag it work.", "zh": "创建一个产品评审的高优先级待办，并标记为工作。" }
+        {
+          "en": "Put passport renewal on next Friday morning and remind me.",
+          "zh": "把更新护照安排到下周五上午，并提醒我。"
+        },
+        {
+          "en": "Create a high-priority calendar item for the product review and tag it work.",
+          "zh": "创建一个产品评审的高优先级日程，并标记为工作。"
+        }
       ],
-      "uses": ["create", "update", "bulk_update"]
+      "uses": [
+        "create",
+        "update",
+        "bulk_update"
+      ]
     },
     {
-      "id": "review-and-organize-todos",
-      "title": { "en": "Review and organize todos", "zh": "复盘并整理待办" },
+      "id": "review-and-organize-calendar",
+      "title": {
+        "en": "Review and organize the calendar",
+        "zh": "复盘并整理日历"
+      },
       "description": {
-        "en": "Search, filter, reschedule, complete, cancel, or bulk-edit todos by status, priority, date range, overdue state, and tags.",
-        "zh": "按状态、优先级、日期区间、逾期状态和标签查找、改期、完成、取消或批量整理待办。"
+        "en": "Search, filter, reschedule, complete, cancel, or bulk-edit scheduled work by status, priority, date range, overdue state, and tags.",
+        "zh": "按状态、优先级、日期区间、逾期状态和标签查找、改期、完成、取消或批量整理日程。"
       },
       "examples": [
-        { "en": "Show overdue todos and move the low priority ones to next week.", "zh": "列出逾期待办，把低优先级的移到下周。" },
-        { "en": "Mark everything tagged errands as completed.", "zh": "把 errands 标签下的事项全部标记完成。" }
+        {
+          "en": "Show overdue items and move the low-priority ones to next week.",
+          "zh": "列出逾期日程，把低优先级的移到下周。"
+        },
+        {
+          "en": "Mark everything tagged errands as completed.",
+          "zh": "把 errands 标签下的事项全部标记完成。"
+        }
       ],
-      "uses": ["list", "get", "update", "bulk_update", "delete"]
+      "uses": [
+        "list",
+        "get",
+        "update",
+        "bulk_update",
+        "delete"
+      ]
     }
   ],
-
   "storage": {
     "tables": [
       {
@@ -68,167 +103,369 @@
           "updated_at": "TEXT NOT NULL"
         },
         "indexes": [
-          ["idx_items_status", "status"],
-          ["idx_items_parent", "parent_id"],
-          ["idx_items_due", "due_date"],
-          ["idx_items_date_start", "date_start"]
+          [
+            "idx_items_status",
+            "status"
+          ],
+          [
+            "idx_items_parent",
+            "parent_id"
+          ],
+          [
+            "idx_items_due",
+            "due_date"
+          ],
+          [
+            "idx_items_date_start",
+            "date_start"
+          ]
         ]
       }
     ]
   },
-
   "agent": {
-    "namespace": "todos",
+    "namespace": "calendar",
     "promptFile": "PROMPT.md",
     "skills": [
       {
         "name": "list",
-        "description": "列出待办，支持按状态/优先级/日期/tag/过期筛选",
+        "description": "列出日历，支持按状态/优先级/日期/tag/逾期筛选",
         "write": false,
         "parameters": {
-          "status": { "type": "string", "enum": ["pending", "in_progress", "completed", "cancelled"] },
-          "priority": { "type": "string", "enum": ["low", "medium", "high", "urgent"] },
-          "date": { "type": "string", "description": "YYYY-MM-DD：返回该日内（区间相交）的待办" },
-          "dateFrom": { "type": "string", "description": "YYYY-MM-DD（含）" },
-          "dateTo": { "type": "string", "description": "YYYY-MM-DD（含）" },
-          "includeUndated": { "type": "boolean" },
-          "overdue": { "type": "boolean", "description": "只返回过期未完成" },
-          "dueBefore": { "type": "string", "description": "YYYY-MM-DD（含）；返回未完成且到期 <= 该日" },
-          "tag": { "type": "string" },
-          "page": { "type": "integer" },
-          "pageSize": { "type": "integer" }
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "in_progress",
+              "completed",
+              "cancelled"
+            ]
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "urgent"
+            ]
+          },
+          "date": {
+            "type": "string",
+            "description": "YYYY-MM-DD：返回该日内（区间相交）的日历"
+          },
+          "dateFrom": {
+            "type": "string",
+            "description": "YYYY-MM-DD（含）"
+          },
+          "dateTo": {
+            "type": "string",
+            "description": "YYYY-MM-DD（含）"
+          },
+          "includeUndated": {
+            "type": "boolean"
+          },
+          "overdue": {
+            "type": "boolean",
+            "description": "只返回过期未完成"
+          },
+          "dueBefore": {
+            "type": "string",
+            "description": "YYYY-MM-DD（含）；返回未完成且到期 <= 该日"
+          },
+          "tag": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "pageSize": {
+            "type": "integer"
+          }
         }
       },
       {
         "name": "get",
-        "description": "获取单个待办详情",
+        "description": "获取单个日程详情",
         "write": false,
         "parameters": {
-          "id": { "type": "string" }
+          "id": {
+            "type": "string"
+          }
         },
-        "required": ["id"]
+        "required": [
+          "id"
+        ]
       },
       {
         "name": "create",
-        "description": "创建新待办（支持时间窗 + 提醒 + 重复规则）",
+        "description": "创建新日历（支持时间窗 + 提醒 + 重复规则）",
         "write": true,
         "parameters": {
-          "title": { "type": "string" },
-          "description": { "type": "string" },
-          "priority": { "type": "string", "enum": ["low", "medium", "high", "urgent"] },
-          "dueDate": { "type": "string", "description": "YYYY-MM-DD 或 YYYY-MM-DDTHH:mm（本地时区）" },
-          "dateStart": { "type": "string", "description": "YYYY-MM-DD 或 YYYY-MM-DDTHH:mm" },
-          "remindAt": { "type": "string", "description": "YYYY-MM-DD 或 YYYY-MM-DDTHH:mm" },
-          "reminderEnabled": { "type": "boolean" },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "urgent"
+            ]
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "YYYY-MM-DD 或 YYYY-MM-DDTHH:mm（本地时区）"
+          },
+          "dateStart": {
+            "type": "string",
+            "description": "YYYY-MM-DD 或 YYYY-MM-DDTHH:mm"
+          },
+          "remindAt": {
+            "type": "string",
+            "description": "YYYY-MM-DD 或 YYYY-MM-DDTHH:mm"
+          },
+          "reminderEnabled": {
+            "type": "boolean"
+          },
           "repeatRule": {
             "type": "object",
             "description": "{ type: 'none'|'daily'|'weekdays'|'weekly'|'monthly', ... }"
           },
-          "parentId": { "type": "string", "description": "父待办 id（用于多级嵌套）" },
-          "color": { "type": "string" },
-          "tags": { "type": "array", "items": { "type": "string" } }
+          "parentId": {
+            "type": "string",
+            "description": "父日历 id（用于多级嵌套）"
+          },
+          "color": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         },
-        "required": ["title"]
+        "required": [
+          "title"
+        ]
       },
       {
         "name": "update",
-        "description": "更新待办内容或状态。status=completed 时自动写 completedAt 并清除提醒",
+        "description": "更新日历内容或状态。status=completed 时自动写 completedAt 并清除提醒",
         "write": true,
         "parameters": {
-          "id": { "type": "string" },
-          "title": { "type": "string" },
-          "description": { "type": "string" },
-          "priority": { "type": "string", "enum": ["low", "medium", "high", "urgent"] },
-          "status": { "type": "string", "enum": ["pending", "in_progress", "completed", "cancelled"] },
-          "dueDate": { "type": "string" },
-          "dateStart": { "type": "string" },
-          "remindAt": { "type": "string" },
-          "reminderEnabled": { "type": "boolean" },
-          "repeatRule": { "type": "object" },
-          "parentId": { "type": "string" },
-          "sortOrder": { "type": "integer" },
-          "color": { "type": "string" },
-          "tags": { "type": "array", "items": { "type": "string" } }
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "urgent"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "in_progress",
+              "completed",
+              "cancelled"
+            ]
+          },
+          "dueDate": {
+            "type": "string"
+          },
+          "dateStart": {
+            "type": "string"
+          },
+          "remindAt": {
+            "type": "string"
+          },
+          "reminderEnabled": {
+            "type": "boolean"
+          },
+          "repeatRule": {
+            "type": "object"
+          },
+          "parentId": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer"
+          },
+          "color": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         },
-        "required": ["id"]
+        "required": [
+          "id"
+        ]
       },
       {
         "name": "bulk_update",
-        "description": "批量更新待办：一次改期、批量完成/取消、批量改优先级或 tag",
+        "description": "批量更新日历：一次改期、批量完成/取消、批量改优先级或 tag",
         "write": true,
         "parameters": {
-          "ids": { "type": "array", "items": { "type": "string" } },
-          "status": { "type": "string", "enum": ["pending", "in_progress", "completed", "cancelled"] },
-          "priority": { "type": "string", "enum": ["low", "medium", "high", "urgent"] },
-          "dueDate": { "type": "string", "description": "ISO 字符串；空串或 'null' 表示清空" },
-          "dateStart": { "type": "string" },
-          "remindAt": { "type": "string" },
-          "reminderEnabled": { "type": "boolean" },
-          "color": { "type": "string" },
-          "addTags": { "type": "array", "items": { "type": "string" } },
-          "removeTags": { "type": "array", "items": { "type": "string" } }
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "in_progress",
+              "completed",
+              "cancelled"
+            ]
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "urgent"
+            ]
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "ISO 字符串；空串或 'null' 表示清空"
+          },
+          "dateStart": {
+            "type": "string"
+          },
+          "remindAt": {
+            "type": "string"
+          },
+          "reminderEnabled": {
+            "type": "boolean"
+          },
+          "color": {
+            "type": "string"
+          },
+          "addTags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "removeTags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         },
-        "required": ["ids"]
+        "required": [
+          "ids"
+        ]
       },
       {
         "name": "delete",
-        "description": "删除待办（不可恢复，但 host 的 undo 框架会通过 reverse handler 还原）",
+        "description": "删除日历（不可恢复，但 host 的 undo 框架会通过 reverse handler 还原）",
         "write": true,
         "parameters": {
-          "id": { "type": "string" }
+          "id": {
+            "type": "string"
+          }
         },
-        "required": ["id"]
+        "required": [
+          "id"
+        ]
       }
     ]
   },
-
   "slots": {
     "sidebar": [
       {
         "id": "main",
         "route": "/",
-        "icon": "CheckSquare",
-        "label": { "en": "Todos", "zh": "待办" }
+        "icon": "CalendarDays",
+        "label": {
+          "en": "Calendar",
+          "zh": "日历"
+        }
       }
     ],
     "launcher": [
       {
         "id": "create",
-        "label": { "en": "New todo…", "zh": "新建待办…" },
+        "label": {
+          "en": "New calendar item...",
+          "zh": "新建日程..."
+        },
         "invokeSkill": "create",
         "shortcut": "cmd+shift+t"
       },
       {
         "id": "open",
-        "label": { "en": "Open Todos", "zh": "打开待办" },
+        "label": {
+          "en": "Open Calendar",
+          "zh": "打开日历"
+        },
         "navigate": "/"
       }
     ]
   },
-
   "autoMention": [
-    { "pattern": "^/(c/)?todo(/(?<id>[a-zA-Z0-9_-]+))?$", "kind": "todo" }
-  ],
-
-  "chatRenderers": [
     {
-      "kind": "application/x.todo-item+json",
-      "title": { "en": "Todo item", "zh": "待办详情" }
-    },
-    {
-      "kind": "application/x.todo-list+json",
-      "title": { "en": "Todo list", "zh": "待办列表" }
-    },
-    {
-      "kind": "application/x.todo-schedule+json",
-      "title": { "en": "Todo schedule", "zh": "待办日程" }
-    },
-    {
-      "kind": "application/x.todo-bulk-action+json",
-      "title": { "en": "Bulk todo update", "zh": "批量待办更新" }
+      "pattern": "^/(c/)?calendar(/(?<id>[a-zA-Z0-9_-]+))?$",
+      "kind": "calendar"
     }
   ],
-
+  "chatRenderers": [
+    {
+      "kind": "application/x.calendar-item+json",
+      "title": {
+        "en": "Calendar item",
+        "zh": "日程详情"
+      }
+    },
+    {
+      "kind": "application/x.calendar-list+json",
+      "title": {
+        "en": "Calendar list",
+        "zh": "日程列表"
+      }
+    },
+    {
+      "kind": "application/x.calendar-schedule+json",
+      "title": {
+        "en": "Calendar schedule",
+        "zh": "日程安排"
+      }
+    },
+    {
+      "kind": "application/x.calendar-bulk-action+json",
+      "title": {
+        "en": "Bulk calendar update",
+        "zh": "批量日程更新"
+      }
+    }
+  ],
   "permissions": {
     "storage": "own",
     "ai": [],

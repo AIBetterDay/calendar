@@ -1,10 +1,10 @@
-# Todos Development
+# Calendar Development
 
 This document is for connector maintainers. The root README is reserved for the Better connector store product page.
 
 ## Repository
 
-- GitHub: https://github.com/AIBetterDay/todos
+- GitHub: https://github.com/AIBetterDay/calendar
 - Connector type: first-party AIBetterDay connector
 
 ## Runtime Shape
@@ -12,7 +12,7 @@ This document is for connector maintainers. The root README is reserved for the 
 - UI entry: ui/dist/index.html
 - Skills entry: skills/dist/main.js
 - Agent skills: list, get, create, update, bulk_update, delete
-- Data: local Better connector storage for todo items
+- Data: local Better connector storage for calendar items
 
 ## Build and Pack
 
