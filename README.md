@@ -1,54 +1,38 @@
-# Todos Connector
+# Todos
 
-> Capture, schedule and complete actionable todos with calendar-aware reminders.
+Capture what needs to happen, place it on your calendar, and let Better help you keep the list moving.
 
-A first-party AIBetterDay connector that ships with the Better app. It is the
-reference implementation for the connector architecture: full SQLite storage,
-six agent skills (`list`/`get`/`create`/`update`/`bulk_update`/`delete`), an
-embedded React UI, sidebar + launcher slots, undo via reverse handlers, and
-calendar-aware time placement.
+[中文](./README.zh-CN.md)
 
-## Layout
+## Why It Helps
 
-```
-manifest.json          # Connector metadata + storage schema + skill catalogue + slots
-PROMPT.md              # Agent guidance loaded when the connector is in scope
-ui/                    # React app served at /c/todo via the host iframe
-  src/App.tsx
-  src/main.tsx
-  index.html
-  vite.config.ts
-skills/                # Node.js skill process forked by the host
-  src/main.ts          # registerSkill(...) for each public skill
-```
+Todos is built for the moment when a thought becomes an action. Add a task in plain language, give it a date or reminder, and review everything from a focused list or calendar view.
 
-## Storage
+## What You Can Do
 
-All rows live in the host's central SQLite, isolated to the table prefix
-`c_todo_`. The connector sees them as a bare `items` table; the host rewrites
-references at SQL parse time. See `manifest.json -> storage.tables[0]`.
+- Capture tasks with title, notes, priority, tags, subtasks, due dates, repeat rules, and reminders.
+- Plan by time with calendar-aware day, week, and month views.
+- Ask Better to find overdue work, reschedule a group, complete errands, or clean up a list.
+- Keep status, priority, reminders, and context visible in the same workspace.
 
-## Development
+## Example Requests
 
-From the repo root:
+- “Remind me to renew the passport next Friday morning.”
+- “Show overdue todos and move the low priority ones to next week.”
+- “Mark everything tagged errands as completed.”
 
-```bash
-pnpm --filter @connector/todo-skills build
-pnpm --filter @connector/todo-ui build
-```
+## Interface Preview
 
-Hot-reload happens automatically via the host's chokidar watcher when running
-the server in dev mode.
+Product screenshots and short demos will live in `assets/store/`. They are intentionally not checked in yet; the store page will be updated again after real product images are added.
 
-## Migrating from the legacy in-host todos module
+## Chat Cards
 
-The legacy module previously exposed `todos_create`, `todos_list`, etc. through
-the host's compile-time agent registry and stored rows in the global `todos`
-table. After this migration:
+When this connector returns structured results in Better chat, render them as product cards from `ui/src/cards/` instead of exposing raw JSON or long plain text. Card assets and styles should stay with the UI code.
 
-- Rows live in `c_todo_items` (data is migrated by the host's bootstrap code,
-  not by this connector).
-- Tool names are now `todo.list`, `todo.create`, etc. The host's agent
-  registry maps the legacy `todos_*` names to the new connector skills for
-  conversation-history compatibility.
-- `goalId` was removed: legacy goals↔todos coupling is dropped per design.
+## Privacy
+
+Todos stores task data inside Better on your device. It does not contact external services and only uses its own connector storage.
+
+## Maintainer Docs
+
+Technical notes, build steps, and release guidance live in [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md). Store media and chat-card conventions live in [docs/STORE_ASSETS.md](./docs/STORE_ASSETS.md).
